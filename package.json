@@ -1,0 +1,23 @@
+{
+  "name": "hydra-vite",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "generate-sitemap": "node scripts/generate-sitemap.js",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0",
+    "hydra-synth": "^1.4.0",
+    "install": "^0.13.0",
+    "npm": "^11.6.3",
+    "vite": "^7.2.4"
+  },
+  "dependencies": {
+    "marked": "^5.1.1"
+  }
+}

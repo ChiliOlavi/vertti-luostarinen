@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+# Sitemap location: point to the published sitemap on GitHub Pages
+# Replace the URL below if you later use a custom domain.
+Sitemap: https://chiliolavi.github.io/vertti-luostarinen/sitemap.xml
+
+# Notes:
+# - This file allows all crawlers to index the site. Adjust rules if you
+#   need to block paths (Disallow: /private/).
+# - If you later add a custom domain, update the Sitemap line accordingly.

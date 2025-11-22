@@ -1,0 +1,325 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  background: #070707;
+  color: #fff;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Accent color for links and interactive elements */
+:root {
+  --accent: #00d1ff; /* bright cyan for strong contrast on dark background */
+  --accent-weak: rgba(0,209,255,0.9);
+}
+
+/* Fullscreen canvas background */
+#hydra-bg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+}
+
+/* Content above canvas */
+.page-content {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Simple nav */
+.site-nav {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  display: flex;
+  gap: 12px;
+  z-index: 2;
+}
+.site-nav a {
+  color: var(--accent);
+  text-decoration: none;
+  background: rgba(0,0,0,0.25);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+.site-nav a:hover { background: rgba(255,255,255,0.05); }
+
+/* Global link styles: higher contrast and clear hover state */
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover,
+a:focus {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.post-list { display: grid; gap: 1.25rem; max-width: 760px; margin: 0 auto; text-align: left; }
+.post-item h2 { margin: 0 0 0.25rem 0; }
+.post-full { max-width: 760px; margin: 0 auto; text-align: left; }
+.post-body { line-height: 1.6; }
+.meta { color: rgba(255,255,255,0.6); font-size: 0.9rem; }
+
+/* About page styling */
+.about {
+  max-width: 68ch;
+  margin: 2.5rem auto;
+  text-align: left;
+  color: #fff;
+  line-height: 1.7;
+  padding: 1.25rem;
+}
+.about .lead {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.95);
+  margin-bottom: 1rem;
+}
+.about h2 {
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: #fff;
+}
+.about ul { margin-left: 1.25rem; }
+.about li { margin-bottom: 0.35rem; }
+
+/* semi-opaque overlay behind text for contrast */
+.page-content::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35));
+  z-index: -1;
+  pointer-events: none;
+}
+
+.controls {
+  margin-top: 1rem;
+}
+button {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+button:active { transform: translateY(1px); }
+
+/* Feed Section */
+.feed {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.feed h1 {
+  margin-bottom: 0.5rem;
+}
+
+.feed > p {
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 2rem;
+}
+
+/* Tag Filters */
+.tag-filters {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+
+.tag-filter {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.tag-filter:hover {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.3);
+}
+
+.tag-filter.active {
+  background: rgba(255,255,255,0.25);
+  border-color: rgba(255,255,255,0.5);
+  font-weight: 600;
+}
+
+/* Feed Grid */
+.feed-grid {
+  /* Masonry-like layout using CSS columns so cards get variable heights
+     based on their content (thumbnail aspect ratio). This keeps the
+     visual order flowing top-to-bottom across columns.
+     Fallback / small screens will stack naturally via media query below. */
+  column-width: 320px;
+  column-gap: 1.5rem;
+  margin-top: 2rem;
+  text-align: left;
+}
+
+/* Feed Cards */
+.feed-card {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+
+  /* Make cards behave as block-level items inside columns so their height
+     is determined by the image/content (variable per-card). Prevent
+     columns from breaking a card in half. */
+  display: inline-block;
+  width: 100%;
+  margin: 0 0 1.5rem;
+  vertical-align: top;
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.feed-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255,255,255,0.25);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.feed-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.feed-content-placeholder {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+}
+
+.feed-media {
+  width: 100%;
+  background: rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+
+.feed-media img,
+.feed-media iframe {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  object-position: center;
+  background: rgba(0,0,0,0.08);
+}
+
+/* Keep hydra-generated thumbnails filling the container (cover) so their
+   procedural visuals remain impactful at thumbnail sizes. These are marked
+   with `data-hydra="1"` when generated. */
+.feed-media img[data-hydra="1"] {
+  /* Keep hydra-generated thumbnails visually strong; they will still
+     respect their intrinsic aspect ratio because height is auto, but
+     cover fallback isn't used (cover requires explicit height). */
+  object-fit: cover;
+}
+
+.feed-card-body {
+  padding: 1.25rem;
+}
+
+.feed-card-body h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
+  line-height: 1.3;
+  color: #fff;
+}
+
+.feed-description {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0 0 1rem 0;
+}
+
+.feed-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.feed-meta time {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.85rem;
+}
+
+.feed-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.feed-tag {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.8);
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.feed-tag:hover {
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.3);
+  color: #fff;
+}
+
+.no-results {
+  display: block;
+  width: 100%;
+  text-align: center;
+  color: rgba(255,255,255,0.5);
+  padding: 3rem;
+  font-size: 1.1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .feed-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .tag-filters {
+    gap: 0.5rem;
+  }
+  
+  .tag-filter {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+}

@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Post</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+    <style>article{max-width:720px;margin:18px auto;padding:0 12px}</style>
+  </head>
+  <body>
+    <nav class="site-nav">
+      <a href="/index.html">Home</a>
+      <a href="/about.html">About</a>
+    </nav>
+
+    <main>
+      <article id="post">
+        <h1 id="title">Loading…</h1>
+        <p id="meta"></p>
+        <div id="content">Loading content…</div>
+      </article>
+    </main>
+
+    <script>
+      function params() { return Object.fromEntries(new URLSearchParams(location.search)); }
+      const p = params();
+      const id = p.id || location.hash.replace('#','') || 'vaartalo';
+
+      const posts = {
+        'vaartalo': {
+          title: 'Väärtalo',
+          meta: 'Tunniste: design',
+          content: `
+            <p>Tämä on esimerkkipostaus nimeltä Väärtalo, joka käsittelee suunnittelun ja designin perusteita.</p>
+            <h2>Sisältögraafin rooli</h2>
+            <p>Tämä postaus on osa sisältögraafin rakennetta. Voit navigoida takaisin graafiin tai selata muita postauksia blogilistasta.</p>
+            <h2>Design-ajatuksia</h2>
+            <ul>
+              <li>Visuaalinen hierarkia on avain hyvään käyttäjäkokemukseen</li>
+              <li>Graafinen esitys auttaa hahmottamaan kokonaisuuksia</li>
+              <li>Interaktiivisuus tekee sisällöstä kiinnostavampaa</li>
+            </ul>
+          `
+        },
+        'mock-post-2': {
+          title: 'No-code AI: Käytännön opas',
+          meta: 'Tunniste: ai',
+          content: `
+            <p>Tekoäly ja no-code-työkalut ovat mullistaneet tavan, jolla luomme digitaalista sisältöä.</p>
+            <h2>Miksi no-code AI?</h2>
+            <p>No-code-lähestymistapa mahdollistaa tekoälyn hyödyntämisen ilman syvällistä ohjelmointiosaamista.</p>
+            <h2>Käytännön sovelluksia</h2>
+            <ul>
+              <li>Sisällöntuotanto ja automaatio</li>
+              <li>Käyttöliittymien generointi</li>
+              <li>Datan analysointi ja visualisointi</li>
+              <li>Chatbotit ja interaktiiviset assistentit</li>
+            </ul>
+            <p>Tämä postaus on esimerkki siitä, miten sisältögraafi voi linkittää eri aiheita yhteen.</p>
+          `
+        },
+        'mock-post-3': {
+          title: 'Feed-integraation esimerkki',
+          meta: 'Tunniste: feeds',
+          content: `
+            <p>Ulkoisten syötteiden integrointi sisältögraafiin avaa ovia dynaamiselle sisällölle.</p>
+            <h2>Mitä feed-integraatio tarkoittaa?</h2>
+            <p>Feed-linkki graafissa voi osoittaa ulkoisiin RSS-syötteisiin, API-rajapintoihin tai muihin datanlähteisiin.</p>
+            <h2>Hyödyt</h2>
+            <ul>
+              <li>Reaaliaikainen sisältö ulkoisista lähteistä</li>
+              <li>Laajempi näkymä aiheeseen liittyvään sisältöön</li>
+              <li>Yhteys muihin yhteisöihin ja alustoihin</li>
+            </ul>
+            <h2>Toteutus</h2>
+            <p>Graafissa oranssi solmu edustaa ulkoista linkkiä, joka avautuu uudessa välilehdessä ja vie käyttäjän pois sivustolta.</p>
+          `
+        }
+      };
+
+      const post = posts[id] || { title: 'Post not found', meta: '', content: '<p>No content for this id.</p>' };
+      document.getElementById('title').textContent = post.title;
+      document.getElementById('meta').textContent = post.meta;
+      document.getElementById('content').innerHTML = post.content + '<p><a href="/index.html">← Takaisin graafiin</a></p>';
+    </script>
+  </body>
+</html>
