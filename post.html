@@ -4,13 +4,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Post</title>
-    <link rel="stylesheet" href="/src/styles.css" />
+    <link rel="stylesheet" href="src/styles.css" />
     <style>article{max-width:720px;margin:18px auto;padding:0 12px}</style>
   </head>
   <body>
     <nav class="site-nav">
-      <a href="/index.html">Home</a>
-      <a href="/about.html">About</a>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
     </nav>
 
     <main>
@@ -81,7 +81,7 @@
       const post = posts[id] || { title: 'Post not found', meta: '', content: '<p>No content for this id.</p>' };
       document.getElementById('title').textContent = post.title;
       document.getElementById('meta').textContent = post.meta;
-      document.getElementById('content').innerHTML = post.content + '<p><a href="/index.html">← Takaisin graafiin</a></p>';
+      document.getElementById('content').innerHTML = post.content + '<p><a href="index.html">← Takaisin graafiin</a></p>';
     </script>
   </body>
 </html>
