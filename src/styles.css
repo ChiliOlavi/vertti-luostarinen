@@ -167,12 +167,12 @@ button:active { transform: translateY(1px); }
 
 /* Feed Grid */
 .feed-grid {
-  /* Masonry-like layout using CSS columns so cards get variable heights
-     based on their content (thumbnail aspect ratio). This keeps the
-     visual order flowing top-to-bottom across columns.
-     Fallback / small screens will stack naturally via media query below. */
-  column-width: 320px;
-  column-gap: 1.5rem;
+  /* Use CSS Grid so items flow row-wise across columns (left-to-right)
+     instead of CSS multi-column (which fills top-to-bottom). Grid keeps
+     chronological ordering readable and predictable. */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
   margin-top: 2rem;
   text-align: left;
 }
@@ -186,16 +186,12 @@ button:active { transform: translateY(1px); }
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
 
-  /* Make cards behave as block-level items inside columns so their height
-     is determined by the image/content (variable per-card). Prevent
-     columns from breaking a card in half. */
-  display: inline-block;
+  /* Grid children should be normal block elements; sizing is handled by
+     the grid column. Remove multi-column break rules which caused
+     column-wise ordering behaviour. */
+  display: block;
   width: 100%;
-  margin: 0 0 1.5rem;
-  vertical-align: top;
-  break-inside: avoid;
-  -webkit-column-break-inside: avoid;
-  page-break-inside: avoid;
+  margin: 0;
 }
 
 .feed-card:hover {
