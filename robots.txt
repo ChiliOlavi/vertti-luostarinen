@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+# Sitemap location for the custom domain
+Sitemap: https://vertti.eu/sitemap.xml
+
+# Notes:
+# - This file allows all crawlers to index the site. Adjust rules if you
+#   need to block paths (Disallow: /private/).
+# - Update the Sitemap line if the domain changes again.
