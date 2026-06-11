@@ -1,6 +1,23 @@
 // Feed data structure
 let feedData = [
   {
+    tags: ["ai", "cultural heritage"],
+    heading: "ORLA - Open Resource & Learning Assistant for Open Cultural Collections",
+    content: "https://meta.wikimedia.org/wiki/Oulu_L%C3%B6yly/Documentation/ORLA_-_Open_Resource_%26_Learning_Assistant",
+    pubDate: "2026-06-10",
+    contentType: "link",
+    description: "ORLA is a self-assesment tool for cultural institutions for institutions looking to open up their collections."
+
+  },
+  {
+    tags: ["media", "ai", "research"],
+    heading: "Grant awarded for AI-generated news simplification project",
+    pubDate: "2025-12-14",
+    content: "https://www.mediaalantutkimussaatio.fi/ajankohtaista/vertti-luostariselle-casvugen-oy-36-315-euroa-tutkimustukea/",
+    contentType: "link",
+    description: "The project 'Beyond Plain Language: Participatory AI-Generated News Simplification for S2 Learners' received a grant from the Media Industry Research Foundation of Finland.",
+  },
+  {
     tags: ["media", "ai"],
     heading: "The good, the bad, and the completely made-up: Newsrooms on wrestling accurate answers out of AI",
     pubDate: "2025-08-04",
@@ -34,6 +51,15 @@ let feedData = [
     contentType: "link",
     description: "Virtual component of the multipart installation 'Layers in the Peace Machine' by Ekho Collective.",
     custom_thumbnail_image_url: "https://images.squarespace-cdn.com/content/v1/5dc5a4c27a44b822c0f378d5/1573235020922-JQDD2JKLBJYT4ERHDRPT/EKHO_LOGO-frame_white_nobg.png?format=original"
+  },
+  {tags: ["ai", "art"],
+    heading: "Installation Coughs of Christmases Past exhibited in Imatra",
+    pubDate: "2025-08-25",
+    contentType: "link",
+    content: "https://www.aalto.fi/en/news/experimental-contemporary-art-exhibition-in-imatra",
+    description: "Välillä Väärässä is an experimental art exhibition taking place in an abandonded hotel.",
+    custom_thumbnail_image_url: "https://www.aalto.fi/sites/default/files/styles/2_3_1380w_600h_n/public/2025-08/Vaaratalo_Imatra_photo_Zina-Marpe.JPG?h=b8c0c725&itok=VHj6lhYu",
+    
   },
   {
     tags: ["ai", "research", "media"],

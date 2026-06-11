@@ -4,15 +4,65 @@
 import Hydra from 'hydra-synth';
 
 const hydraCanvas = document.getElementById('hydra-bg');
+const interactionCanvas = document.createElement('canvas');
+const interactionCtx = interactionCanvas.getContext('2d');
+const isLandingPage = /(^\/|\/index\.html)$/i.test(window.location.pathname);
 // Pointer state for interactive modulation (normalized 0..1)
 let mouseX = 0.5;
 let mouseY = 0.5;
-window.addEventListener('pointermove', (e) => {
-  if (!hydraCanvas) return;
-  const rect = hydraCanvas.getBoundingClientRect();
-  mouseX = (e.clientX - rect.left) / rect.width;
-  mouseY = (e.clientY - rect.top) / rect.height;
-}, { passive: true });
+let smoothMouseX = 0.5;
+let smoothMouseY = 0.5;
+let pointerActivity = 0;
+let pointerVelocity = 0;
+let smoothPointerVelocity = 0;
+let pointerVelX = 0;
+let pointerVelY = 0;
+let smoothPointerVelX = 0;
+let smoothPointerVelY = 0;
+let pointerHeading = 0;
+let smoothPointerHeading = 0;
+let lastPointerX = 0.5;
+let lastPointerY = 0.5;
+let lastPointerTime = performance.now();
+
+if (isLandingPage) {
+  window.addEventListener('pointermove', (e) => {
+    if (!hydraCanvas) return;
+    const rect = hydraCanvas.getBoundingClientRect();
+    const now = performance.now();
+    const dt = Math.max(8, now - lastPointerTime);
+    mouseX = (e.clientX - rect.left) / rect.width;
+    mouseY = (e.clientY - rect.top) / rect.height;
+    const dx = mouseX - lastPointerX;
+    const dy = mouseY - lastPointerY;
+    const moveAmount = Math.hypot(dx, dy);
+
+    // Deadzone removes touchpad micro jitter when dragging very slowly.
+    if (moveAmount < 0.0006) {
+      pointerVelX = 0;
+      pointerVelY = 0;
+      pointerVelocity = 0;
+    } else {
+      pointerVelX = dx / (dt * 0.001);
+      pointerVelY = dy / (dt * 0.001);
+      pointerVelocity = Math.min(4, Math.hypot(pointerVelX, pointerVelY));
+      if (pointerVelocity > 0.05) {
+        pointerHeading = Math.atan2(pointerVelY, pointerVelX);
+      }
+    }
+    lastPointerX = mouseX;
+    lastPointerY = mouseY;
+    lastPointerTime = now;
+    pointerActivity = 1;
+  }, { passive: true });
+}
+
+function shortestAngleDelta(from, to) {
+  let delta = to - from;
+  while (delta > Math.PI) delta -= Math.PI * 2;
+  while (delta < -Math.PI) delta += Math.PI * 2;
+  return delta;
+}
 
 // Generate a unique seed for this user (persist in localStorage)
 function getUserSeed() {
@@ -55,6 +105,8 @@ function resizeCanvas(targetWidth, targetHeight, scale = 1) {
     hydraCanvas.style.width = targetWidth + 'px';
     hydraCanvas.style.height = targetHeight + 'px';
   }
+  interactionCanvas.width = w;
+  interactionCanvas.height = h;
 }
 
 function doResize() {
@@ -76,6 +128,77 @@ const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: r
 let hydraInstance = null;
 let rafId = null;
 
+function drawPointerField() {
+  if (!interactionCtx) return;
+
+  const w = interactionCanvas.width;
+  const h = interactionCanvas.height;
+  interactionCtx.clearRect(0, 0, w, h);
+
+  if (!isLandingPage) return;
+
+  const t = performance.now() * 0.001;
+  const x = smoothMouseX * w;
+  const y = smoothMouseY * h;
+  const speedBoost = Math.min(1.2, smoothPointerVelocity * 0.5);
+  const baseline = Math.min(0.2, 0.07 + pointerActivity * 0.04 + speedBoost * 0.05);
+  const baseGray = Math.round(baseline * 255);
+  interactionCtx.fillStyle = `rgb(${baseGray}, ${baseGray}, ${baseGray})`;
+  interactionCtx.fillRect(0, 0, w, h);
+
+  const cornerDist = Math.max(
+    Math.hypot(x, y),
+    Math.hypot(w - x, y),
+    Math.hypot(x, h - y),
+    Math.hypot(w - x, h - y)
+  );
+  const fieldRadius = cornerDist * (1.03 + 0.04 * Math.sin(t * 1.7));
+  const nearBoost = Math.min(0.72, 0.24 + pointerActivity * 0.12 + speedBoost * 0.2);
+
+  const fullField = interactionCtx.createRadialGradient(x, y, 0, x, y, fieldRadius);
+  fullField.addColorStop(0, `rgba(255, 255, 255, ${nearBoost})`);
+  fullField.addColorStop(0.25, `rgba(255, 255, 255, ${nearBoost * 0.46})`);
+  fullField.addColorStop(0.6, `rgba(255, 255, 255, ${nearBoost * 0.14})`);
+  fullField.addColorStop(1, 'rgba(255, 255, 255, 0.01)');
+
+  interactionCtx.save();
+  interactionCtx.globalCompositeOperation = 'lighter';
+  interactionCtx.fillStyle = fullField;
+  interactionCtx.fillRect(0, 0, w, h);
+
+  const heading = smoothPointerHeading;
+  const coreSize = Math.max(w, h) * (0.1 + speedBoost * 0.05 + pointerActivity * 0.03);
+  interactionCtx.translate(x, y);
+  interactionCtx.rotate(heading + (0.04 + speedBoost * 0.12) * Math.sin(t * 2.2));
+  interactionCtx.scale(1.25 + speedBoost * 0.35, 0.78);
+  const core = interactionCtx.createRadialGradient(0, 0, 0, 0, 0, coreSize);
+  core.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+  core.addColorStop(0.45, 'rgba(255, 255, 255, 0.42)');
+  core.addColorStop(1, 'rgba(255, 255, 255, 0)');
+  interactionCtx.fillStyle = core;
+  interactionCtx.beginPath();
+  interactionCtx.arc(0, 0, coreSize, 0, Math.PI * 2);
+  interactionCtx.fill();
+  interactionCtx.restore();
+
+  // Keep viewport borders calmer to avoid stretched-looking edge distortion.
+  const edgeMaskRadius = Math.hypot(w * 0.5, h * 0.5) * 1.02;
+  const edgeMask = interactionCtx.createRadialGradient(
+    w * 0.5,
+    h * 0.5,
+    edgeMaskRadius * 0.68,
+    w * 0.5,
+    h * 0.5,
+    edgeMaskRadius
+  );
+  edgeMask.addColorStop(0, 'rgba(255, 255, 255, 1)');
+  edgeMask.addColorStop(1, 'rgba(255, 255, 255, 0.7)');
+  interactionCtx.globalCompositeOperation = 'destination-in';
+  interactionCtx.fillStyle = edgeMask;
+  interactionCtx.fillRect(0, 0, w, h);
+  interactionCtx.globalCompositeOperation = 'source-over';
+}
+
 function initHydra() {
   if (hydraInstance || prefersReducedMotion()) return;
   
@@ -87,7 +210,8 @@ function initHydra() {
     precision: 'mediump' 
   });
   
-  const { osc, noise, shape, gradient, voronoi, solid, s0, s1, o0 } = hydraInstance.synth;
+  const { osc, noise, shape, src, s0, o0, o1 } = hydraInstance.synth;
+  s0.init({ src: interactionCanvas });
   
   // Wild, unpredictable, noisy monochromatic patterns
   // Each pattern is unique to the user but consistent across visits
@@ -106,7 +230,7 @@ function initHydra() {
         .color(hue, hue + 0.15, hue + 0.08)
         .contrast(1.3)
         .saturate(0.4)
-        .out(o0);
+        .out(o1);
       break;
       
     case 1: // Turbulent flows
@@ -121,7 +245,7 @@ function initHydra() {
         .color(hue, hue + 0.2, hue + 0.1)
         .contrast(1.2)
         .saturate(0.45)
-        .out(o0);
+        .out(o1);
       break;
       
     case 2: // Distorted feedback
@@ -138,7 +262,7 @@ function initHydra() {
         .color(hue, hue + 0.18, hue + 0.09)
         .contrast(1.4)
         .saturate(0.35)
-        .out(o0);
+        .out(o1);
       break;
       
     case 3: // Layered chaos
@@ -160,7 +284,7 @@ function initHydra() {
         .color(hue, hue + 0.16, hue + 0.07)
         .contrast(1.25)
         .saturate(0.4)
-        .out(o0);
+        .out(o1);
       break;
       
     case 4: // Organic turbulence
@@ -181,15 +305,54 @@ function initHydra() {
         .color(hue, hue + 0.22, hue + 0.11)
         .contrast(1.35)
         .saturate(0.38)
-        .out(o0);
+        .out(o1);
       break;
   }
+
+  // Pointer response is baked into the same field (no visible overlay layer).
+  // A hidden offscreen canvas provides a single local influence area.
+  src(o1)
+    .modulate(
+      noise(7, 0.05)
+        .mult(src(s0)),
+      () => 0.0035 + pointerActivity * 0.009 + smoothPointerVelocity * 0.004
+    )
+    .modulateScale(
+      noise(3, 0.02)
+        .mult(src(s0)),
+      () => 1.012 + pointerActivity * 0.03 + smoothPointerVelocity * 0.017
+    )
+    .out(o0);
   
   // Start render loop
   let lastTime = performance.now();
   function loop(now) {
     const dt = now - lastTime;
     lastTime = now;
+    if (isLandingPage) {
+      smoothMouseX += (mouseX - smoothMouseX) * 0.11;
+      smoothMouseY += (mouseY - smoothMouseY) * 0.11;
+      smoothPointerVelocity += (pointerVelocity - smoothPointerVelocity) * 0.18;
+      smoothPointerVelX += (pointerVelX - smoothPointerVelX) * 0.18;
+      smoothPointerVelY += (pointerVelY - smoothPointerVelY) * 0.18;
+      smoothPointerHeading += shortestAngleDelta(smoothPointerHeading, pointerHeading) * 0.14;
+      pointerVelocity *= 0.9;
+      pointerVelX *= 0.88;
+      pointerVelY *= 0.88;
+      pointerActivity *= 0.965;
+      if (pointerActivity < 0.001) pointerActivity = 0;
+    } else {
+      pointerActivity = 0;
+      pointerVelocity = 0;
+      smoothPointerVelocity = 0;
+      pointerVelX = 0;
+      pointerVelY = 0;
+      smoothPointerVelX = 0;
+      smoothPointerVelY = 0;
+      pointerHeading = 0;
+      smoothPointerHeading = 0;
+    }
+    drawPointerField();
     hydraInstance.tick(dt);
     rafId = requestAnimationFrame(loop);
   }

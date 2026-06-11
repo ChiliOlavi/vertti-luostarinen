@@ -1,10 +1,9 @@
 import { defineConfig } from 'vite';
 import path from 'path';
 
-// For GitHub Pages (project site) we need to set `base` so built asset
-// URLs include the repository name. This can be overridden with the
-// environment variable `BASE_URL` or `VITE_BASE` when building.
-const repoBase = process.env.BASE_URL || process.env.VITE_BASE || '/vertti-luostarinen/';
+// Default to root for a custom domain deployment.
+// Can be overridden with BASE_URL or VITE_BASE when needed.
+const repoBase = process.env.BASE_URL || process.env.VITE_BASE || '/';
 
 export default defineConfig({
   base: repoBase,
