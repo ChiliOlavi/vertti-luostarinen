@@ -2,6 +2,32 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <script>
+      history.scrollRestoration = "manual";
+      const root = document.documentElement;
+      let pinnedScrollY = 0;
+      window.pinFeedScroll = () => {
+        if (root.style.overflow === "hidden" && window.scrollY !== pinnedScrollY) {
+          window.scrollTo(0, pinnedScrollY);
+        }
+      };
+      window.finishFeedScrollLock = () => {
+        if (root.style.overflow !== "hidden") return;
+        window.clearTimeout(window.feedScrollLockTimeout);
+        window.removeEventListener("scroll", window.pinFeedScroll);
+        root.style.overflow = "";
+        window.scrollTo(0, 0);
+      };
+      window.lockFeedScroll = (scrollY = window.scrollY) => {
+        pinnedScrollY = scrollY;
+        root.style.overflow = "hidden";
+        window.scrollTo(0, pinnedScrollY);
+        window.addEventListener("scroll", window.pinFeedScroll, { passive: true });
+        window.clearTimeout(window.feedScrollLockTimeout);
+        window.feedScrollLockTimeout = window.setTimeout(window.finishFeedScrollLock, 2500);
+      };
+      window.lockFeedScroll(0);
+    </script>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Feed — Vertti Luostarinen</title>
     <meta name="description" content="Latest links, projects and writing from Vertti Luostarinen — curated feed and updates." />

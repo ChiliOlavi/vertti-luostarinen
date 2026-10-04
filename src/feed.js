@@ -617,6 +617,7 @@ function renderTagFilters(maxTags = 6) {
   container.querySelectorAll('.tag-filter').forEach(btn => {
     btn.addEventListener('click', () => {
       const tag = btn.dataset.tag;
+      window.lockFeedScroll(0);
       filterFeed(tag);
     });
   });
@@ -632,7 +633,6 @@ function renderFeed(filterTag = "all") {
     ? feedData 
     : feedData.filter(item => item.tags.includes(filterTag));
 
-  // Clear container
   container.innerHTML = "";
 
   // Create cards
