@@ -1,6 +1,31 @@
 // Feed data structure
 let feedData = [
   {
+    tags: ["art", "technology"],
+    heading: "Sustainability, AI and Systems Thinking – Layers in the Peace Machine",
+    pubDate: "2026-10-04",
+    content: "https://oulu2026.eu/en/programme/culture-programme/lumo-art-tech/",
+    contentType: "link",
+    description: "I'm giving a talk with Iina Taijonlahti at the Lumo Art & Tech event in Oulu 18.11.2026.",
+    custom_thumbnail_image_url: "https://oulu2026.eu/wp-content/uploads/2026/09/99612d7afca84665349a97474e3f7ad4-1.png"
+  },
+  {
+    tags: ["art", "technology"],
+    heading: "Towards greater digital independence in artistic production",
+    pubDate: "2026-10-04",
+    content: "https://www.pixelache.com/reclaiming-the-digital/",
+    contentType: "link",
+    description: "I'm attending a panel at the Reclaiming the Digital event in Helsinki, 19.10.2026.",
+    custom_thumbnail_image_url: "https://www.pixelache.com/wp-content/uploads/2026/09/INSTA-meetresethki-20261019-FINAL3.jpg"
+  },
+  {tags: ["art", "ai", "research"],
+    heading: "Root Tracing Workshop",
+    pubDate: "2026-10-04",
+    content: "https://luma.com/pm2zsk71",
+    contentType: "link",
+    description: "This workshop explores if data annotation for AI models can be considered art."
+  },
+  {
     tags: ["ai", "cultural heritage"],
     heading: "ORLA - Open Resource & Learning Assistant for Open Cultural Collections",
     content: "https://meta.wikimedia.org/wiki/Oulu_L%C3%B6yly/Documentation/ORLA_-_Open_Resource_%26_Learning_Assistant",
