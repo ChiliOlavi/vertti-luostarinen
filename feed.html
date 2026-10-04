@@ -2,11 +2,37 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <script>
+      history.scrollRestoration = "manual";
+      const root = document.documentElement;
+      let pinnedScrollY = 0;
+      window.pinFeedScroll = () => {
+        if (root.style.overflow === "hidden" && window.scrollY !== pinnedScrollY) {
+          window.scrollTo(0, pinnedScrollY);
+        }
+      };
+      window.finishFeedScrollLock = () => {
+        if (root.style.overflow !== "hidden") return;
+        window.clearTimeout(window.feedScrollLockTimeout);
+        window.removeEventListener("scroll", window.pinFeedScroll);
+        root.style.overflow = "";
+        window.scrollTo(0, 0);
+      };
+      window.lockFeedScroll = (scrollY = window.scrollY) => {
+        pinnedScrollY = scrollY;
+        root.style.overflow = "hidden";
+        window.scrollTo(0, pinnedScrollY);
+        window.addEventListener("scroll", window.pinFeedScroll, { passive: true });
+        window.clearTimeout(window.feedScrollLockTimeout);
+        window.feedScrollLockTimeout = window.setTimeout(window.finishFeedScrollLock, 2500);
+      };
+      window.lockFeedScroll(0);
+    </script>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Feed — Vertti Luostarinen</title>
     <meta name="description" content="Latest links, projects and writing from Vertti Luostarinen — curated feed and updates." />
     <meta name="robots" content="index, follow" />
-    <link rel="alternate" type="application/rss+xml" title="Feed" href="/assets/feed-CSKDXmf7.html" />
+    <link rel="alternate" type="application/rss+xml" title="Feed" href="/assets/feed-CmQjn7xi.html" />
     <!-- OpenGraph -->
     <meta property="og:site_name" content="Vertti Luostarinen" />
     <meta property="og:title" content="Feed — Vertti Luostarinen" />
@@ -26,7 +52,7 @@
       "description": "Latest links, projects and writing from Vertti Luostarinen."
     }
     </script>
-    <script type="module" crossorigin src="/assets/feed-BBW_G0Wu.js"></script>
+    <script type="module" crossorigin src="/assets/feed-BECdtHjl.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/hydra-synth-glnHEduy.js">
     <link rel="modulepreload" crossorigin href="/assets/preload-helper-BXl3LOEh.js">
     <link rel="stylesheet" crossorigin href="/assets/styles-0ngp56c2.css">
